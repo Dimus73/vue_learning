@@ -2,18 +2,14 @@
   <div>
     <form @submit.prevent action="">
       <h4>Create post</h4>
-<!--      v-bind:value="post.title"-->
-<!--      @input = "post.title = $event.target.value"-->
-      <input
+      <my-input
           v-model="post.title"
-          class="input"
           placeholder="title"
-      >
-      <input
+      />
+      <my-input
           v-model="post.body"
-          class="input"
           placeholder="body"
-      >
+      />
       <my-button
           style="align-self: flex-end; margin-top: 15px"
           @click="createPost"
@@ -26,13 +22,19 @@
 
 <script>
 
+
+
+import MyInput from "@/Components/UI/MyInput.vue";
+
 export default {
+  components: {MyInput},
   data(){
     return {
       post: {
         title: '',
         body: '',
-      }
+      },
+      testInputVar:''
     }
   },
   methods: {
@@ -54,14 +56,5 @@ form {
   display: flex;
   flex-direction: column;
 }
-
-.input {
-  width: 100%;
-  padding: 10px 15px;
-  border: 2px, solid, teal;
-  margin-top: 15px;
-}
-
-
 
 </style>

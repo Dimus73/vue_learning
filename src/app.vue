@@ -1,9 +1,25 @@
 <template>
   <div class="app">
-    <PostForm
-        @createPost="createPost"
+    <h1>Posts page</h1>
+    <div class="app__btns">
+      <my-button
+          @click="showDialog"
+          style="margin: 15px 0;"
+      >
+        Create post
+      </my-button>
+    </div>
+    <my-dialog v-model:show="dialogVisible" >
+      <PostForm
+          @createPost="createPost"
+      />
+    </my-dialog>
+    <PostList
+        :posts="posts"
+        @remove123 = "removePost"
+        v-if="!isPostsLoading"
     />
-    <PostList :posts="posts"/>
+    <div v-else>Loading.....</div>
   </div>
 </template>
 
@@ -12,52 +28,53 @@
   // import * as events from "events";
   import PostForm from "./Components/PostForm.vue";
   import PostList from "@/Components/PostList.vue";
+  import axios from "axios";
+  import MyInput from "@/Components/UI/MyInput.vue";
+  import MyButton from "@/Components/UI/MyButton.vue";
   export default {
-    components: {PostForm, PostList},
-    computed: {
-      // events() {
-      //   return events
-      // }
-      PostList,
-      PostForm,
-    },
+    components: {MyButton, MyInput, PostForm, PostList},
+
     data () {
       return {
-        posts : [
-            {
-              id:1,
-              title: 'Java post',
-              body: 'Java post body bla bla bla'
-            },
-            {
-              id:3,
-              title: 'Java post2',
-              body: 'Java post body bla bla bla2'
-            },
-            {
-              id:2,
-              title: 'Java post3',
-              body: 'Java post body bla bla bla3'
-            },
-        ],
+        posts : [],
+        dialogVisible: false,
+        test_input:'',
+        isPostsLoading: false,
       }
     },
     methods: {
       createPost(newPost) {
         this.posts.push (newPost);
+        this.dialogVisible = false;
       },
-      //
-      // inputTitle (e) {
-      //   e.preventDefault();
-      //   this.title = e.this.value;
-      // },
-      //
-      // inputBody (e) {
-      //   e.preventDefault();
-      //   this.body = e.this.value;
-      // },
+      removePost (post) {
+        console.log('Post=>', post)
+        this.posts = this.posts.filter ( v => v.id != post.id )
+      },
+      showDialog () {
+        this.dialogVisible = true;
+      },
+      async fetchPost () {
+        try {
+          this.isPostsLoading = true;
+          setTimeout(async ()=>{
+            const response = await axios.get ('https://jsonplaceholder.typicode.com/posts?_limit=10');
+            console.log('Axios:=>', response)
+            this.posts.push (...response.data);
+            this.isPostsLoading = false;
 
-    }
+          }, 2000)
+        } catch (e) {
+          console.log('My Error', e);
+        } finally {
+        }
+      },
+    },
+    mounted () {
+      console.log('*******************');
+      this.fetchPost();
+    },
+
 
   }
 </script>
@@ -74,5 +91,9 @@
   padding: 20px;
 }
 
+.app__btns {
+  display: flex;
+  justify-content: space-between;
+}
 
 </style>
