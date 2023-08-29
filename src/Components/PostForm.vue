@@ -46,8 +46,8 @@ export default {
         body: '',
       }
     },
+  },
 
-  }
 }
 </script>
 
